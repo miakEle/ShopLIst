@@ -12,6 +12,8 @@ class MainActivity : AppCompatActivity() {
 
     private lateinit var viewModel: MainViewModel
 
+    private var count: Int = 0
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
@@ -19,6 +21,12 @@ class MainActivity : AppCompatActivity() {
         viewModel = ViewModelProvider(this)[MainViewModel::class.java]
         viewModel.shopList.observe(this){
             Log.d("MainActivityTest", it.toString())
+            if (count == 0) {
+                viewModel.deleteShopItem(it[count])
+                viewModel.changeEnableStateOfItem(it[count+1])
+                count++
+
+            }
         }
 
     }
