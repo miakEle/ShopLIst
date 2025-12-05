@@ -22,12 +22,13 @@ class MainActivity : AppCompatActivity() {
         viewModel.shopList.observe(this){
             Log.d("MainActivityTest", it.toString())
             if (count == 0) {
-                viewModel.deleteShopItem(it[count])
-                viewModel.changeEnableStateOfItem(it[count+1])
                 count++
+                val item = it[0]
+                viewModel.changeEnableStateOfItem(item)
 
             }
         }
+
 
     }
 }
