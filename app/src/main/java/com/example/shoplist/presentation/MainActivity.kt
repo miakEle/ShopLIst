@@ -2,33 +2,57 @@ package com.example.shoplist.presentation
 
 import android.os.Bundle
 import android.util.Log
-import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
+import androidx.recyclerview.widget.RecyclerView
 import com.example.shoplist.R
 
 
 class MainActivity : AppCompatActivity() {
 
     private lateinit var viewModel: MainViewModel
+    private lateinit var shopListAdapter: ShopListAdapter
 
-    private var count: Int = 0
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        enableEdgeToEdge()
         setContentView(R.layout.activity_main)
+        setUpRecycleView()
         viewModel = ViewModelProvider(this)[MainViewModel::class.java]
-        viewModel.shopList.observe(this){
-            Log.d("MainActivityTest", it.toString())
-            if (count == 0) {
-                count++
-                val item = it[0]
-                viewModel.changeEnableStateOfItem(item)
-
-            }
+        viewModel.shopList.observe(this) {
+            shopListAdapter.submitList(it)
         }
 
 
     }
+
+    private fun setUpRecycleView(){
+        val rvShopList = findViewById<RecyclerView>(R.id.rv_shop_list)
+        with(rvShopList){
+            shopListAdapter = ShopListAdapter()
+            adapter = shopListAdapter
+            recycledViewPool.setMaxRecycledViews(ShopListAdapter.VIEW_TYPE_ENABLED, ShopListAdapter.MAX_POOL_SIZE)
+            recycledViewPool.setMaxRecycledViews(ShopListAdapter.VIEW_TYPE_DISABLED,
+                ShopListAdapter.MAX_POOL_SIZE)
+        }
+        setupLongClickListener()
+        setupClickListener()
+    }
+
+
+
+
+    private  fun setupLongClickListener(){
+        shopListAdapter.onShopItemLongClickListener = {
+            viewModel.changeEnableStateOfItem(it)
+        }
+
+    }
+
+    private fun setupClickListener(){
+        shopListAdapter.onShopItemClickListener = {
+            Log.d("MainActivity", it.toString())
+        }
+    }
+
 }
