@@ -42,7 +42,7 @@
         app:layout_constraintTop_toBottomOf="@+id/til_name">
 
         <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/te_count"
+            android:id="@+id/et_count"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="@string/count_hint"
