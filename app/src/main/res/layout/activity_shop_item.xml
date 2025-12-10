@@ -43,7 +43,7 @@
 
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/te_count"
-            android:layout_width="0dp"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="@string/count_hint"
             android:inputType="number"/>
