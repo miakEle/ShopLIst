@@ -9,7 +9,7 @@ import com.example.shoplist.domain.ShopItem
 
 class MainViewModel: ViewModel() {
 
-    private val repository = ShopListRepositoryImpl()
+    private val repository = ShopListRepositoryImpl
 
 
     private  val getShopListUseCase = GetShopListUseCase(repository)
