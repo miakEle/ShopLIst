@@ -58,6 +58,7 @@ class ShopItemActivity: AppCompatActivity() {
         viewModel.shouldCloseScreen.observe(this) {
             finish()
         }
+
     }
 
     private fun launchRightMode() {

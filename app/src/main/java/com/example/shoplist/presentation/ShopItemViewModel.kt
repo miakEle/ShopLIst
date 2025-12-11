@@ -11,7 +11,7 @@ import com.example.shoplist.domain.ShopItem
 
 class ShopItemViewModel: ViewModel() {
 
-    private val repository = ShopListRepositoryImpl()
+    private val repository = ShopListRepositoryImpl
 
     private val getShopItemUseCase = GetShopItemByIdUseCase(repository)
     private val addShopItemUseCase = AddShopItemUseCase(repository)
@@ -19,7 +19,7 @@ class ShopItemViewModel: ViewModel() {
 
     private val _errorInputName = MutableLiveData<Boolean>()
     val errorInputName: LiveData<Boolean>
-        get() = _errorInputCount
+        get() = _errorInputName
     private val _errorInputCount = MutableLiveData<Boolean>()
     val errorInputCount: LiveData<Boolean>
         get() = _errorInputCount
@@ -38,16 +38,15 @@ class ShopItemViewModel: ViewModel() {
         _shopItem.value = item
     }
 
-    fun addShopItem(inputName: String?, inputCount: String?){
+    fun addShopItem(inputName: String?, inputCount: String?) {
         val name = parseName(inputName)
         val count = parseCount(inputCount)
         val fieldsValid = validateInput(name, count)
-        if (fieldsValid){
+        if (fieldsValid) {
             val shopItem = ShopItem(name, count, true)
             addShopItemUseCase.addShopItem(shopItem)
             finishWork()
         }
-
     }
 
     fun editShopItem(inputName: String?, inputCount: String?){
@@ -56,7 +55,7 @@ class ShopItemViewModel: ViewModel() {
         val fieldsValid = validateInput(name, count)
         if (fieldsValid){
             _shopItem.value?.let {
-                val shopItem = it.copy(name,count)
+                val shopItem = it.copy(name = name,count = count)
                 editShopItemUseCase.editShopItem(shopItem)
                 finishWork()
             }
