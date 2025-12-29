@@ -1,21 +1,29 @@
 package com.example.shoplist.presentation
 
+import android.app.Application
+import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.example.shoplist.data.ShopListRepositoryImpl
 import com.example.shoplist.domain.AddShopItemUseCase
 import com.example.shoplist.domain.EditShopItemUseCase
 import com.example.shoplist.domain.GetShopItemByIdUseCase
 import com.example.shoplist.domain.ShopItem
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.cancel
+import kotlinx.coroutines.launch
 
-class ShopItemViewModel: ViewModel() {
+class ShopItemViewModel(application: Application) : AndroidViewModel(application) {
 
-    private val repository = ShopListRepositoryImpl
+    private val repository = ShopListRepositoryImpl(application)
 
     private val getShopItemUseCase = GetShopItemByIdUseCase(repository)
     private val addShopItemUseCase = AddShopItemUseCase(repository)
     private val editShopItemUseCase = EditShopItemUseCase(repository)
+
+//    private val scope = CoroutineScope(Dispatchers.Main)
 
     private val _errorInputName = MutableLiveData<Boolean>()
     val errorInputName: LiveData<Boolean>
@@ -33,9 +41,13 @@ class ShopItemViewModel: ViewModel() {
         get() = _shouldCloseScreen
 
 
-    fun getShopItem(shopItemId: Int){
-        val item = getShopItemUseCase.getShopItemById(shopItemId)
-        _shopItem.value = item
+    fun getShopItem(shopItemId: Int) {
+        viewModelScope.launch {
+            val item = getShopItemUseCase.getShopItemById(shopItemId)
+            _shopItem.value = item  //если не в главном потоке то postValue(item)
+        }
+
+
     }
 
     fun addShopItem(inputName: String?, inputCount: String?) {
@@ -43,45 +55,51 @@ class ShopItemViewModel: ViewModel() {
         val count = parseCount(inputCount)
         val fieldsValid = validateInput(name, count)
         if (fieldsValid) {
-            val shopItem = ShopItem(name, count, true)
-            addShopItemUseCase.addShopItem(shopItem)
-            finishWork()
-        }
-    }
-
-    fun editShopItem(inputName: String?, inputCount: String?){
-        val name = parseName(inputName)
-        val count = parseCount(inputCount)
-        val fieldsValid = validateInput(name, count)
-        if (fieldsValid){
-            _shopItem.value?.let {
-                val shopItem = it.copy(name = name,count = count)
-                editShopItemUseCase.editShopItem(shopItem)
+            viewModelScope.launch {
+                val shopItem = ShopItem(name, count, true)
+                addShopItemUseCase.addShopItem(shopItem)
                 finishWork()
             }
         }
 
     }
 
-    private fun parseName(inputName: String?): String{
+    fun editShopItem(inputName: String?, inputCount: String?) {
+        val name = parseName(inputName)
+        val count = parseCount(inputCount)
+        val fieldsValid = validateInput(name, count)
+        if (fieldsValid) {
+            _shopItem.value?.let {
+                viewModelScope.launch {
+                    val shopItem = it.copy(name = name, count = count)
+                    editShopItemUseCase.editShopItem(shopItem)
+                    finishWork()
+                }
+            }
+        }
+
+
+    }
+
+    private fun parseName(inputName: String?): String {
         return inputName?.trim() ?: ""
     }
 
-    private fun parseCount(inputCount: String?): Int{
+    private fun parseCount(inputCount: String?): Int {
         return try {
             inputCount?.trim()?.toInt() ?: 0
-        }catch (e: Exception){
+        } catch (e: Exception) {
             0
         }
     }
 
-    private fun validateInput(name: String, count: Int): Boolean{
+    private fun validateInput(name: String, count: Int): Boolean {
         var result = true
-        if (name.isBlank()){
+        if (name.isBlank()) {
             _errorInputName.value = true
             result = false
         }
-        if (count <= 0){
+        if (count <= 0) {
             _errorInputCount.value = true
             result = false
         }
@@ -96,7 +114,12 @@ class ShopItemViewModel: ViewModel() {
         _errorInputCount.value = false
     }
 
-    private fun finishWork(){
+    private fun finishWork() {
         _shouldCloseScreen.value = Unit
     }
+
+//    override fun onCleared() {
+//        super.onCleared()
+//        scope.cancel() если scope от CoroutineScope(Dispatchers.Main)
+//    }
 }
