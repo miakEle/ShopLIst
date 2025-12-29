@@ -1,4 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
+<layout>
+    <data>
+        <variable
+            name="viewModel"
+            type="com.example.shoplist.presentation.ShopItemViewModel" />
+    </data>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
@@ -24,8 +30,10 @@
             android:id="@+id/et_name"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:text="@{viewModel.shopItem.name}"
             android:hint="@string/name_hint"
-            android:inputType="textCapWords" />
+            android:inputType="textCapWords"
+            app:errorInputName="@{viewModel.errorInputName}"/>
 
     </com.google.android.material.textfield.TextInputLayout>
 
@@ -46,6 +54,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="@string/count_hint"
+            app:intToString="@{viewModel.shopItem.count}"
+            app:errorInputCount="@{viewModel.errorInputCount}"
             android:inputType="number"/>
 
     </com.google.android.material.textfield.TextInputLayout>
@@ -61,3 +71,4 @@
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>
