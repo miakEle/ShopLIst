@@ -1,15 +1,10 @@
 package com.example.shoplist.data
 
 import android.app.Application
-import android.util.Log
-import android.view.animation.Transformation
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MediatorLiveData
-import androidx.lifecycle.MutableLiveData
 import com.example.shoplist.domain.ShopItem
 import com.example.shoplist.domain.ShopListRepository
-import kotlin.random.Random
-
 
 
 class ShopListRepositoryImpl(application: Application): ShopListRepository {
