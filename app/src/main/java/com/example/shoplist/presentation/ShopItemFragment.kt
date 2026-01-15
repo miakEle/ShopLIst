@@ -9,17 +9,28 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
+import com.example.shoplist.ShopListApp
 import com.example.shoplist.databinding.FragmentShopItemBinding
 import com.example.shoplist.domain.ShopItem
+import javax.inject.Inject
 
 class ShopItemFragment: Fragment() {
+
+    private val component by lazy {
+        (requireActivity().application as ShopListApp).component.getActivityComponent().create()
+    }
+
+    @Inject
+    lateinit var viewModelFactory: ViewModelFactory
 
     private var _binding: FragmentShopItemBinding? = null
 
    private val binding : FragmentShopItemBinding
        get() = _binding ?: throw RuntimeException("FragmentShopItemBinding == null")
 
-    private lateinit var viewModel: ShopItemViewModel
+    private val viewModel by lazy {
+        ViewModelProvider(this, viewModelFactory)[ShopItemViewModel::class]
+    }
 
     private lateinit var onEditingFinishedListener: OnEditingFinishedListener
 
@@ -35,6 +46,7 @@ class ShopItemFragment: Fragment() {
 
 
     override fun onAttach(context: Context) {
+        component.inject(this)
         super.onAttach(context)
         if (context is OnEditingFinishedListener){
             onEditingFinishedListener = context
@@ -60,7 +72,6 @@ class ShopItemFragment: Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        viewModel = ViewModelProvider(this)[ShopItemViewModel::class.java]
         binding.viewModel = viewModel
         binding.lifecycleOwner = viewLifecycleOwner
 
