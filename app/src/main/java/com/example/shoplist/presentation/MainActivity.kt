@@ -1,5 +1,6 @@
 package com.example.shoplist.presentation
 
+import android.annotation.SuppressLint
 import android.os.Bundle
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
@@ -11,6 +12,7 @@ import com.example.shoplist.R
 import com.example.shoplist.ShopListApp
 import com.example.shoplist.databinding.ActivityMainBinding
 import javax.inject.Inject
+import androidx.core.net.toUri
 
 
 class MainActivity : AppCompatActivity(), ShopItemFragment.OnEditingFinishedListener{
@@ -29,6 +31,7 @@ class MainActivity : AppCompatActivity(), ShopItemFragment.OnEditingFinishedList
     private lateinit var binding: ActivityMainBinding
 
 
+    @SuppressLint("Recycle")
     override fun onCreate(savedInstanceState: Bundle?) {
         component.inject(this)
         super.onCreate(savedInstanceState)
@@ -46,6 +49,14 @@ class MainActivity : AppCompatActivity(), ShopItemFragment.OnEditingFinishedList
                 launchFragment(ShopItemFragment.newInstanceAddItem())
             }
         }
+
+        contentResolver.query(
+            "content://com.example.shoplist/shop_item".toUri(),
+            null,
+            null,
+            null,
+            null
+        )
 
 
     }
